@@ -15,7 +15,7 @@ void SolverThread::run()
             // Syntax Error
             emit notifyMessage("Couldn't parse a cube state data. (Invalid Time Out Value)");
             // 失敗を通知
-            emit notifyCompleted(false);
+            emit notifyCompleted(false, "");
             return;
         }
         // strListを連結する
@@ -34,7 +34,7 @@ void SolverThread::run()
         // Syntax Error
         emit notifyMessage("Couldn't parse a cube state data. (Syntax Error)");
         // 失敗を通知
-        emit notifyCompleted(false);
+        emit notifyCompleted(false, "");
         return;
     }
 
@@ -58,5 +58,5 @@ void SolverThread::run()
     // Solutionを送信
     emit notifySolution(strSolution);
     // 成功を通知
-    emit notifyCompleted(true);
+    emit notifyCompleted(true, strSolution);
 }

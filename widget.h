@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QTcpServer>
-
+#include <QTimer>
+#define INTERVAL 50
 #include "solverthread.h"
 
 namespace Ui {
@@ -22,7 +23,8 @@ private slots:
     void acceptConnection();
     void disConnection();
     void receiveData();
-    void onCompleted(bool isSuccess);
+    void updateProgress();
+    void onCompleted(bool isSuccess, QString solution);
     void appendMessage(QString p_message);
 
     void on_pushButtonStart_clicked();
@@ -34,12 +36,20 @@ private slots:
     void on_pushButtonSolve_clicked();
 
 private:
+    // GUIクラス
     Ui::Widget *ui;
+    // マルチスレッド管理
     SolverThread worker;
+    // Progress計測用タイマー
+    QTimer *timer;
+    int m_timerCount;
 
+    // サーバーの起動フラグ
     bool ServerIsValid;
+    // Solverの処理フラグ
     bool busy;
 
+    // ネットワーク関連変数
     int m_port;
     QTcpServer *tcpServer;
     QTcpSocket *tcpSocket;

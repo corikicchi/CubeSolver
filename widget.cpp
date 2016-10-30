@@ -35,7 +35,8 @@ Widget::Widget(QWidget *parent) :
     connect(&worker, SIGNAL(notifyTimeOutValue(QString)), ui->lineEditTimeOut, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifyCubeState(QString)), ui->lineEditCubeState, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifySolution(QString)), ui->lineEditSolution, SLOT(setText(QString)));
-    connect(&worker, SIGNAL(notifyCompleted(bool)), this, SLOT(onCompleted(bool)));
+    connect(&worker, SIGNAL(notifyCompleted(bool,QString)), this, SLOT(onCompleted(bool,QString)));
+
 }
 
 Widget::~Widget()
@@ -94,6 +95,12 @@ bool Widget::solve(QString p_message)
         worker.setMessage(p_message);
         worker.start();
 
+        timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+        m_timerCount = 0;
+        ui->progressBar->setValue(0);
+        timer->start(INTERVAL);
+
         // timeOutを変更できないようにする
         ui->lineEditTimeOut->setEnabled(false);
 
@@ -108,12 +115,19 @@ bool Widget::solve(QString p_message)
     }
 }
 
-void Widget::onCompleted(bool isSuccess)
+void Widget::updateProgress()
+{
+    double progress = ((double)(m_timerCount) / ui->lineEditTimeOut->text().toDouble()) * 100;
+    m_timerCount += (INTERVAL);
+    ui->progressBar->setValue((int)progress + 20);
+}
+
+void Widget::onCompleted(bool isSuccess, QString solution)
 {
     busy = false;
     if(isSuccess){
         if(ServerIsValid){
-            sendData(ui->lineEditSolution->text());
+            sendData(solution);
         }
         ui->progressBar->setValue(100);
     }
@@ -121,6 +135,7 @@ void Widget::onCompleted(bool isSuccess)
         appendMessage("Failed to solve the cube.");
         ui->progressBar->setValue(0);
     }
+    timer->stop();
     ui->lineEditTimeOut->setEnabled(true);
 }
 
@@ -198,7 +213,6 @@ void Widget::on_pushButtonStop_clicked()
 
 void Widget::on_lineEditCubeState_textChanged(const QString &arg1)
 {
-    // U:YRRRGRRGR D:GBWYBGGWO L:BBYYRWYBY R:WGWWOWBOW F:BYBOWGOOO B:GYORYOGBR
     // show cube colors
     QStringList strList = arg1.split(" ");
     if(strList.size() <= 6){

@@ -21,7 +21,7 @@ protected:
     virtual void run();
 
 signals:
-    void notifyCompleted(bool isSuccess);
+    void notifyCompleted(bool isSuccess, QString solution);
     void notifyMessage(QString p_message);
     void notifyTimeOutValue(QString p_message);
     void notifyCubeState(QString p_message);

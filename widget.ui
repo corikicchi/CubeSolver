@@ -11,14 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string>Cuve Solver</string>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>160</width>
+     <width>131</width>
      <height>22</height>
     </rect>
    </property>
@@ -42,9 +42,9 @@
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>150</x>
      <y>10</y>
-     <width>511</width>
+     <width>541</width>
      <height>81</height>
     </rect>
    </property>
@@ -602,7 +602,7 @@
      <x>10</x>
      <y>210</y>
      <width>131</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
@@ -614,8 +614,8 @@
     <rect>
      <x>10</x>
      <y>40</y>
-     <width>161</width>
-     <height>54</height>
+     <width>131</width>
+     <height>51</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
