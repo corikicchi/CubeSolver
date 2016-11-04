@@ -11,13 +11,13 @@ public:
     {
         m_timeOut = p_timeOut;
     }
-    void setMessage(QString p_message)
+    void setStrCubeState(QString p_message)
     {
         m_message = p_message;
     }
 
 protected:
-    // run前にm_timeOutとm_messageを設定する
+    // run前にsetTimeOutとsetStrCubeStateを設定する
     virtual void run();
 
 signals:

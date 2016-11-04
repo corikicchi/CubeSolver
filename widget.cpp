@@ -81,20 +81,128 @@ void Widget::receiveData()
         appendMessage("The server has received a cube state.");
     }
 
-    // 解きます
-    solve(QString(buffer).trimmed());
+    // 受信できたのでデータをparse
+    if(busy || worker.isRunning()){
+        appendMessage("Solver is busy now.");
+        if(ServerIsValid){
+            sendData("busy");
+        }
+        return;
+    }
+    appendMessage("Start to parse a cube state data.");
+
+    // とりあえず現在のtimeOutを取得
+    int timeOut = ui->lineEditTimeOut->text().toInt();
+
+    // Cube Stateのparseを行う
+    QString strCubeState = "";
+    QStringList strList = QString(buffer).trimmed().split(" "); // Spaceで分割
+    if(strList.size() == 7){
+        // タイムアウト情報があると判断
+        timeOut = QString(strList.at(0)).toInt();
+        if(timeOut == 0){
+            // Syntax Error
+            appendMessage("Couldn't parse a cube state data. (Invalid Time Out Value)");
+            // 失敗を通知
+            onCompleted(false, "");
+            return;
+        }
+        // strListを連結する
+        for(int i = 1; i < 7; i++){
+            strCubeState += QString(strList.at(i)) + " ";
+        }
+    }
+    else if(strList.size() == 6){
+        // タイムアウト情報がないと判断
+        // timeOutはそのまま
+        // strListを連結する
+        for(int i = 0; i < 6; i++){
+            strCubeState += QString(strList.at(i)) + " ";
+        }
+    }
+    else{
+        // Syntax Error
+        appendMessage("Couldn't parse a cube state data. (Syntax Error)");
+        // 失敗を通知
+        onCompleted(false, "");
+        return;
+    }
+
+    // timeOutの値を表示
+    ui->lineEditTimeOut->setText(QString::number(timeOut));
+    // Cube Stateを表示
+    strCubeState = strCubeState.trimmed();  // 両端をトリム
+    ui->lineEditCubeState->setText(strCubeState);
+
+    appendMessage("Finish parsing a cube state data.");
+
+    // スルーモードの時はそのまま解きます
+    if(ui->checkBoxThrough->isChecked()){
+        solve(timeOut, strCubeState.trimmed());
+    }
 }
 
-bool Widget::solve(QString p_message)
+bool Widget::solve(int p_timeOut, QString p_message)
 {
     // Solver処理中は処理を行わないようにする
     if(!busy && !worker.isRunning()){
         busy = true;
 
-        worker.setTimeOut(ui->lineEditTimeOut->text().toInt());
-        worker.setMessage(p_message);
+        /*
+        appendMessage("Start to parse a cube state data.");
+
+        // とりあえず現在のtimeOutを取得
+        int timeOut = ui->lineEditTimeOut->text().toInt();
+
+        // Cube Stateのparseを行う
+        QString strCubeState = "";
+        QStringList strList = p_message.split(" "); // Spaceで分割
+        if(strList.size() == 7){
+            // タイムアウト情報があると判断
+            timeOut = QString(strList.at(0)).toInt();
+            if(timeOut == 0){
+                // Syntax Error
+                appendMessage("Couldn't parse a cube state data. (Invalid Time Out Value)");
+                // 失敗を通知
+                onCompleted(false, "");
+                return false;
+            }
+            // strListを連結する
+            for(int i = 1; i < 7; i++){
+                strCubeState += QString(strList.at(i)) + " ";
+            }
+        }
+        else if(strList.size() == 6){
+            // タイムアウト情報がないと判断
+            // timeOutはそのまま
+            // strListを連結する
+            for(int i = 0; i < 6; i++){
+                strCubeState += QString(strList.at(i)) + " ";
+            }
+        }
+        else{
+            // Syntax Error
+            appendMessage("Couldn't parse a cube state data. (Syntax Error)");
+            // 失敗を通知
+            onCompleted(false, "");
+            return false;
+        }
+
+        // timeOutの値を表示
+        ui->lineEditTimeOut->setText(QString::number(timeOut));
+        // Cube Stateを表示
+        strCubeState = strCubeState.trimmed();  // 両端をトリム
+        ui->lineEditCubeState->setText(strCubeState);
+
+        appendMessage("Finish parsing a cube state data.");
+        */
+        // Solverの初期設定
+        worker.setTimeOut(p_timeOut);
+        worker.setStrCubeState(p_message.trimmed());
+        // Solverスタート
         worker.start();
 
+        // timerスタート
         timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
         m_timerCount = 0;
@@ -127,12 +235,12 @@ void Widget::onCompleted(bool isSuccess, QString solution)
     busy = false;
     if(isSuccess){
         if(ServerIsValid){
-            sendData(solution);
+            sendData(solution.trimmed());
         }
         ui->progressBar->setValue(100);
     }
     else{
-        appendMessage("Failed to solve the cube.");
+        appendMessage("Failed to parse/solve the cube.");
         ui->progressBar->setValue(0);
     }
     timer->stop();
@@ -330,9 +438,11 @@ void Widget::setColor(char p_color, int p_pos)
 void Widget::on_pushButtonSolve_clicked()
 {
     // 解きます
+    /*
     if(ServerIsValid){
         // サーバーを止める
         on_pushButtonStop_clicked();
     }
-    solve(QString(ui->lineEditCubeState->text()).trimmed());
+    */
+    solve(ui->lineEditTimeOut->text().toInt(), QString(ui->lineEditCubeState->text()).trimmed());
 }
