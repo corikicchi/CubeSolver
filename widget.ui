@@ -596,19 +596,6 @@
     <string>Syntax : &quot;f:ccccccccc[space]&quot; x 6 ( f : face in order [U, D, L, R, F, B], c : color [W, O, R, B, G, Y] )</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonSolve">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>240</y>
-     <width>131</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Solve</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
@@ -684,6 +671,19 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonSolve">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>240</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Solve</string>
    </property>
   </widget>
  </widget>

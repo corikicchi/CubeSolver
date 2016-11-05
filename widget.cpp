@@ -36,7 +36,6 @@ Widget::Widget(QWidget *parent) :
     connect(&worker, SIGNAL(notifyCubeState(QString)), ui->lineEditCubeState, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifySolution(QString)), ui->lineEditSolution, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifyCompleted(bool,QString)), this, SLOT(onCompleted(bool,QString)));
-
 }
 
 Widget::~Widget()
@@ -90,7 +89,7 @@ void Widget::receiveData()
         return;
     }
     appendMessage("Start to parse a cube state data.");
-
+    ui->progressBar->setValue(0);
     // とりあえず現在のtimeOutを取得
     int timeOut = ui->lineEditTimeOut->text().toInt();
 
@@ -216,7 +215,7 @@ bool Widget::solve(int p_timeOut, QString p_message)
     }
     else{
         appendMessage("Solver is busy now.");
-        if(ServerIsValid){
+        if(ServerIsValid && ui->checkBoxThrough->isChecked()){
             sendData("busy");
         }
         return false;
@@ -287,8 +286,8 @@ void Widget::on_pushButtonStart_clicked()
     ui->pushButtonStop->setEnabled(true);
     ui->lineEditPort->setEnabled(false);
 
-    ui->lineEditCubeState->clear();
-    ui->lineEditSolution->clear();
+    //ui->lineEditCubeState->clear();
+    //ui->lineEditSolution->clear();
 
     // listenの開始
     tcpServer = new QTcpServer(this);

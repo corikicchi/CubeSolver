@@ -24,7 +24,7 @@ private slots:
     void disConnection();
     void receiveData();
     void updateProgress();
-    void onCompleted(bool isSuccess, QString solution);
+    void onCompleted(bool isSuccess = false, QString solution = "");
     void appendMessage(QString p_message);
 
     void on_pushButtonStart_clicked();
