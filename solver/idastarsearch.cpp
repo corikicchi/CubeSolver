@@ -38,6 +38,32 @@ CIDAstarSearch::CIDAstarSearch()
 {
 	m_minSolutionLength = InitialSolutionLength;
 	m_solutionStack.clear();
+
+    // MoveTable connection
+    connect(&m_twistMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_flipMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_choiceMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_cornerPermutationMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_upDownEdgePermutationMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_middleEdgePermutationMoveTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+
+    // PruningTable connection
+    connect(&m_twistAndFlipPruningTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_twistAndChoicePruningTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_flipAndChoicePruningTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_cornerAndUpDownPruningTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
+    connect(&m_upDownAndMiddlePruningTable, SIGNAL(notifySolverMessage(QString)),
+            this, SLOT(onGetSolverMessage(QString)));
 }
 
 CIDAstarSearch::~CIDAstarSearch()
@@ -49,73 +75,73 @@ void CIDAstarSearch::InitializeTables()
 {
 	// Phase 1のMoveTableを作成する
     //std::cout << "Initializing TwistMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing TwistMoveTable");
+    emit notifySolverMessage("Initializing TwistMoveTable");
 	m_twistMoveTable.Initialize("TwistMoveTable.mt");
     //std::cout << "Size = " << m_twistMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_twistMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_twistMoveTable.GetSize()));
 
     //std::cout << "Initializing FlipMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing FlipMoveTable");
+    emit notifySolverMessage("Initializing FlipMoveTable");
 	m_flipMoveTable.Initialize("FlipMoveTable.mt");
     //std::cout << "Size = " << m_flipMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_flipMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_flipMoveTable.GetSize()));
 
     //std::cout << "Initializing ChoiceMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing ChoiceMoveTable");
+    emit notifySolverMessage("Initializing ChoiceMoveTable");
 	m_choiceMoveTable.Initialize("ChoiceMoveTable.mt");
     //std::cout << "Size = " << m_choiceMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_choiceMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_choiceMoveTable.GetSize()));
 
 	// Phase 2のMoveTableを作成する
     //std::cout << "Initializing CornerPermutationMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing CornerPermutationMoveTable");
+    emit notifySolverMessage("Initializing CornerPermutationMoveTable");
 	m_cornerPermutationMoveTable.Initialize("CornerPermutationMoveTable.mt");
     //std::cout << "Size = " << m_cornerPermutationMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_cornerPermutationMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_cornerPermutationMoveTable.GetSize()));
 
     //std::cout << "Initializing UpDownEdgePermutationMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing UpDownEdgePermutationMoveTable");
+    emit notifySolverMessage("Initializing UpDownEdgePermutationMoveTable");
 	m_upDownEdgePermutationMoveTable.Initialize("UpDownEdgePermutationMoveTable.mt");
     //std::cout << "Size = " << m_upDownEdgePermutationMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_upDownEdgePermutationMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_upDownEdgePermutationMoveTable.GetSize()));
 
     //std::cout << "Initializing MiddleEdgePermutationMoveTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing MiddleEdgePermutationMoveTable");
+    emit notifySolverMessage("Initializing MiddleEdgePermutationMoveTable");
 	m_middleEdgePermutationMoveTable.Initialize("MiddleEdgePermutationMoveTable.mt");
     //std::cout << "Size = " << m_middleEdgePermutationMoveTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_middleEdgePermutationMoveTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_middleEdgePermutationMoveTable.GetSize()));
 
 	// Phase 1のPruningTableを作成する
     //std::cout << "Initializing TwistAndFlipPruningTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing TwistAndFlipPruningTable");
+    emit notifySolverMessage("Initializing TwistAndFlipPruningTable");
 	m_twistAndFlipPruningTable.Initialize("TwistAndFlipPruningTable.pt");
     //std::cout << "Size = " << m_twistAndFlipPruningTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_twistAndFlipPruningTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_twistAndFlipPruningTable.GetSize()));
 
     //std::cout << "Initializing TwistAndChoicePruningTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing TwistAndChoicePruningTable");
+    emit notifySolverMessage("Initializing TwistAndChoicePruningTable");
 	m_twistAndChoicePruningTable.Initialize("TwistAndChoicePruningTable.pt");
     //std::cout << "Size = " << m_twistAndChoicePruningTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_twistAndChoicePruningTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_twistAndChoicePruningTable.GetSize()));
 
     //std::cout << "Initializing FlipAndChoicePruningTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing FlipAndChoicePruningTable");
+    emit notifySolverMessage("Initializing FlipAndChoicePruningTable");
 	m_flipAndChoicePruningTable.Initialize("FlipAndChoicePruningTable.pt");
     //std::cout << "Size = " << m_flipAndChoicePruningTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_flipAndChoicePruningTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_flipAndChoicePruningTable.GetSize()));
 
 	// Phase 2のPruningTableを作成する
     //std::cout << "Initializing CornerAndUpDownPruningTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing CornerAndUpDownPruningTable");
+    emit notifySolverMessage("Initializing CornerAndUpDownPruningTable");
 	m_cornerAndUpDownPruningTable.Initialize("CornerAndUpDownPruningTable.pt");
     //std::cout << "Size = " << m_cornerAndUpDownPruningTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_cornerAndUpDownPruningTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_cornerAndUpDownPruningTable.GetSize()));
 
     //std::cout << "Initializing UpDownAndMiddlePruningTable" << std::endl;
-    //emit SolverThread::notifySolverMessage("Initializing UpDownAndMiddlePruningTable");
+    emit notifySolverMessage("Initializing UpDownAndMiddlePruningTable");
 	m_upDownAndMiddlePruningTable.Initialize("UpDownAndMiddlePruningTable.pt");
     //std::cout << "Size = " << m_upDownAndMiddlePruningTable.GetSize() << std::endl;
-    //emit SolverThread::notifySolverMessage("Size = " + QString::number(m_upDownAndMiddlePruningTable.GetSize()));
+    //emit notifySolverMessage("Size = " + QString::number(m_upDownAndMiddlePruningTable.GetSize()));
 }
 
 // Two Phase AlgorithmによるIDA*探索を開始する
@@ -146,7 +172,7 @@ int CIDAstarSearch::Solve(const COrdinalCube &p_scrambledCube, int64_t p_timeOut
 
 	do{
         //std::cout << "threshold(" << iteration << ") = " << m_threshold1 << std::endl;
-        //emit SolverThread::notifySolverMessage(QString::number(iteration) + " : threshold = " + QString::number(m_threshold1));
+        emit notifySolverMessage("[" + QString::number(iteration) + " : phase 1 threshold = " + QString::number(m_threshold1) + "]");
 		m_nextThreshold1 = InitialSolutionLength;	// コストを最大にする
 
 		// 現在のCubeの状態に対して，深さ0のIDA*探索を開始する
@@ -164,7 +190,7 @@ int CIDAstarSearch::Solve(const COrdinalCube &p_scrambledCube, int64_t p_timeOut
 		iteration++;
 
         //std::cout << "Phase 1 nodes = " << m_nodes1 << std::endl;
-        //emit SolverThread::notifySolverMessage("Phase 1 nodes = " + QString::number(m_nodes1));
+        emit notifySolverMessage("Phase 1 nodes = " + QString::number(m_nodes1));
 
 		// タイマーCheck
 		if (m_timer->isTimeOut() || result == TIME_OUT) {
@@ -507,22 +533,21 @@ void CIDAstarSearch::PrintAndStackSolution()
 	for (int i = 0; i < m_solutionLength1; i++) {
 		// 無駄な移動を簡単にしてから表示する
 		//std::cout << CCube::NameOfMove(TranslateMove(solutionMoves1[i], solutionPowers1[i], false)) << " ";
-        //emit SolverThread::notifySolverMessage(QString::fromStdString(CCube::GetNameOfMove(TranslateMove(m_solutionMoves1[i], m_solutionPowers1[i], false))) + " ");
 		ss << CCube::GetNameOfMove(TranslateMove(m_solutionMoves1[i], m_solutionPowers1[i], false)) << " ";
 	}
-	//std::cout << ". ";
-    //emit SolverThread::notifySolverMessage(". ");
+
+    //std::cout << ". ";
 	ss << ". ";
+
 	for (int i = 0; i < m_solutionLength2; i++) {
 		// 無駄な移動を簡単にしてから表示する
 		//std::cout << CCube::NameOfMove(TranslateMove(solutionMoves2[i], solutionPowers2[i], true)) << " ";
-        //emit SolverThread::notifySolverMessage(QString::fromStdString(CCube::GetNameOfMove(TranslateMove(m_solutionMoves2[i], m_solutionPowers2[i], true))) + " ");
 		ss << CCube::GetNameOfMove(TranslateMove(m_solutionMoves2[i], m_solutionPowers2[i], true)) << " ";
 	}
     //std::cout << "(" << solutionLength1 + solutionLength2 << ")" << std::endl;
-    //emit SolverThread::notifySolverMessage("(" + QString::number(m_solutionLength1 + m_solutionLength2) + ")");
 
-	m_solutionStack.push_back(ss.str());
+    emit notifySolverMessage(QString::fromStdString(ss.str()).trimmed());
+    m_solutionStack.push_back(QString::fromStdString(ss.str()).trimmed().toStdString());
 }
 
 int CIDAstarSearch::TranslateMove(const int p_move, int p_power,  const bool p_phase2) const

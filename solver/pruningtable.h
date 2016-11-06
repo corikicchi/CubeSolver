@@ -6,11 +6,16 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <QObject>
 
 // パターンデータベースのクラス
 // ある状態遷移を行った時の2種類のMoveTableの序数をIndexとして初期状態からのコスト(Depth)を格納する
-class CPruningTable
+class CPruningTable : public QObject
 {
+    Q_OBJECT
+signals:
+    void notifySolverMessage(QString p_message);
+
 public:
 	// 組み合わせる2つのMoveTableとcleanCubeにおける各序数を格納する
 	CPruningTable(

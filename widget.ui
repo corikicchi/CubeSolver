@@ -691,9 +691,22 @@
     <rect>
      <x>10</x>
      <y>480</y>
-     <width>681</width>
+     <width>631</width>
      <height>111</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonSolverClear">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>480</y>
+     <width>41</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Clear</string>
    </property>
   </widget>
  </widget>

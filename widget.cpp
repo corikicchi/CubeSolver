@@ -37,6 +37,9 @@ Widget::Widget(QWidget *parent) :
     connect(&worker, SIGNAL(notifySolution(QString)), ui->lineEditSolution, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifyCompleted(bool,QString)), this, SLOT(onCompleted(bool,QString)));
     connect(&worker, SIGNAL(notifySolverMessage(QString)), this, SLOT(appendSolverMessage(QString)));
+
+    // GUI connection
+    connect(ui->pushButtonSolverClear, SIGNAL(clicked(bool)), ui->textBrowserSolver, SLOT(clear()));
 }
 
 Widget::~Widget()

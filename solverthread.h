@@ -16,6 +16,12 @@ public:
         m_message = p_message;
     }
 
+public slots:
+    void onGetSolverMessage(QString p_message)
+    {
+        emit notifySolverMessage(p_message);
+    }
+
 protected:
     // run前にsetTimeOutとsetStrCubeStateを設定する
     virtual void run();

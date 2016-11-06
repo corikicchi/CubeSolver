@@ -42,14 +42,24 @@
 
 #include <vector>
 #include <string>
+#include <QObject>
 
 #include "ordinalcube.h"
 #include "submovetable.h"
 #include "pruningtable.h"
 #include "timer.h"
 
-class CIDAstarSearch
+class CIDAstarSearch : public QObject
 {
+    Q_OBJECT
+public slots:
+    void onGetSolverMessage(QString p_message)
+    {
+        emit notifySolverMessage(p_message);
+    }
+signals:
+    void notifySolverMessage(QString p_message);
+
 public:
 	CIDAstarSearch();
 	~CIDAstarSearch();

@@ -33,20 +33,22 @@ void CPruningTable::Initialize(const std::string p_fileName)
 	if (!input){
 		// ファイルが無いときはファイルを作る
         //std::cout << "Generating..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Generating...");
+        emit notifySolverMessage("Generating...");
 		GeneratePruningTable();
         //std::cout << "Saving..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Saving...");
+        emit notifySolverMessage("Saving...");
 		std::ofstream output(p_fileName, std::ios::out | std::ios::binary);
 		output.write((const char*)m_table, m_allocationSize);
         //std::cout << "Done" << std::endl;
-        //emit SolverThread::notifySolverMessage("Done");
+        emit notifySolverMessage("Done");
 	}
 	else{
 		// ファイルが存在したら読み込む
         //std::cout << "Loading..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Loading...");
+        //emit notifySolverMessage("Loading...");
 		input.read((char*)m_table, m_allocationSize);
+        //std::cout << "Done" << std::endl;
+        //emit notifySolverMessage("Done");
 	}
 }
 
@@ -100,7 +102,7 @@ void CPruningTable::GeneratePruningTable()
 		// 探索が終了したらdepthを深くする
 		depth++;
         //std::cout << "Completed Depth = " << depth << std::endl;
-        //emit SolverThread::notifySolverMessage("Completed Depth = " + QString::number(depth));
+        emit notifySolverMessage("Completed Depth = " + QString::number(depth));
 	}
 }
 

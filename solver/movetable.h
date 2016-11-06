@@ -4,11 +4,16 @@
 #include "cube.h"
 
 #include <string>
+#include <QObject>
 
 // CMoveTable
 // (状態Sに対して6種類の移動を行ったときの状態S'を列挙するTableを作成するための基底クラス)
-class CMoveTable
+class CMoveTable : public QObject
 {
+    Q_OBJECT
+signals:
+    void notifySolverMessage(QString p_message);
+
 public:
 	// CubeへのReference,MoveTableのサイズ,Phase2かどうかを設定してメモリを確保
 	// CubeはReferenceなのでMoveTableのメンバ関数によって操作される

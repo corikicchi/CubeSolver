@@ -42,7 +42,7 @@ CGroupCube::CubeError CGroupCube::SetCubeState(CCube& cube)
 }
 
 // エラーコードをテキスト変換する
-std::string CGroupCube::GetErrorText(const CubeError p_error) const
+std::string CGroupCube::GetErrorText(const CubeError p_error)
 {
 	if (p_error >= NumberOfErrors) {
 		return errorText[0];

@@ -35,14 +35,14 @@ void CMoveTable::Initialize(const std::string p_fileName)
 		// ファイルが存在しないとき
 		// MoveTableを作成する
         //std::cout << "Generating..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Generating...");
+        emit notifySolverMessage("Generating...");
 		GenerateMoveTable();
 
 		// MoveTableは，各状態のCubeに対して6種類の移動を行い，
 		// ぞれぞれの状態のState Number(ordinal)を代入しているので，
 		// 1つの状態(ordinal)に対するテーブルのサイズ(byte)は 6種類の移動 * sizeof(int)になる
         //std::cout << "Saving..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Saving...");
+        emit notifySolverMessage("Saving...");
 		std::ofstream outputFile(p_fileName, std::ios::out | std::ios::binary);
 		for (int index = 0; index < m_tableSize; index++) {
 			outputFile.write((char*)&m_table[index],
@@ -50,13 +50,13 @@ void CMoveTable::Initialize(const std::string p_fileName)
 		}
 		outputFile.close();
         //std::cout << "Done" << std::endl;
-        //emit SolverThread::notifySolverMessage("Done");
+        emit notifySolverMessage("Done");
 	}
 	else{
 		// ファイルが存在するとき
 		// MoveTableを読み込む
         //std::cout << "Loading..." << std::endl;
-        //emit SolverThread::notifySolverMessage("Loading...");
+        //emit notifySolverMessage("Loading...");
 
 		// MoveTableは，各状態のcubeに対して6種類の移動を行い，
 		// ぞれぞれの状態のState Number(ordinal)を代入しているので，
@@ -67,7 +67,7 @@ void CMoveTable::Initialize(const std::string p_fileName)
 		}
 		inputFile.close();
         //std::cout << "Done" << std::endl;
-        //emit SolverThread::notifySolverMessage("Done");
+        //emit notifySolverMessage("Done");
 	}
 }
 

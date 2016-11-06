@@ -45,7 +45,7 @@ public:
 	CubeError SetCubeState(CCube& cube);
 
 	// エラーコードをテキスト変換する
-	std::string GetErrorText(const CubeError p_error) const;
+    static std::string GetErrorText(const CubeError p_error);
 
 	// Cubeの状態を出力する
 	void PrintCubeState() const;
