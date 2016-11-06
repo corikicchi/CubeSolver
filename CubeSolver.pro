@@ -14,9 +14,29 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         widget.cpp \
-    solverthread.cpp
+    solverthread.cpp \
+    solver/calculateordinal.cpp \
+    solver/cube.cpp \
+    solver/cubeparser.cpp \
+    solver/groupcube.cpp \
+    solver/idastarsearch.cpp \
+    solver/movetable.cpp \
+    solver/ordinalcube.cpp \
+    solver/printvector.cpp \
+    solver/pruningtable.cpp
 
 HEADERS  += widget.h \
-    solverthread.h
+    solverthread.h \
+    solver/cube.h \
+    solver/cubeparser.h \
+    solver/groupcube.h \
+    solver/movetable.h \
+    solver/printvector.h \
+    solver/pruningtable.h \
+    solver/submovetable.h \
+    solver/timer.h \
+    solver/calculateordinal.h \
+    solver/idastarsearch.h \
+    solver/ordinalcube.h
 
 FORMS    += widget.ui

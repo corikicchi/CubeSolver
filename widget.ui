@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>480</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -684,6 +684,16 @@
    </property>
    <property name="text">
     <string>Solve</string>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="textBrowserSolver">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>480</y>
+     <width>681</width>
+     <height>111</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -36,6 +36,7 @@ Widget::Widget(QWidget *parent) :
     connect(&worker, SIGNAL(notifyCubeState(QString)), ui->lineEditCubeState, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifySolution(QString)), ui->lineEditSolution, SLOT(setText(QString)));
     connect(&worker, SIGNAL(notifyCompleted(bool,QString)), this, SLOT(onCompleted(bool,QString)));
+    connect(&worker, SIGNAL(notifySolverMessage(QString)), this, SLOT(appendSolverMessage(QString)));
 }
 
 Widget::~Widget()
@@ -226,7 +227,7 @@ void Widget::updateProgress()
 {
     double progress = ((double)(m_timerCount) / ui->lineEditTimeOut->text().toDouble()) * 100;
     m_timerCount += (INTERVAL);
-    ui->progressBar->setValue((int)progress + 20);
+    ui->progressBar->setValue((int)progress + 10);
 }
 
 void Widget::onCompleted(bool isSuccess, QString solution)
@@ -239,7 +240,13 @@ void Widget::onCompleted(bool isSuccess, QString solution)
         ui->progressBar->setValue(100);
     }
     else{
+        if(!solution.isEmpty()){
+            appendMessage(solution);
+        }
         appendMessage("Failed to parse/solve the cube.");
+        if(ServerIsValid){
+            sendData("failed");
+        }
         ui->progressBar->setValue(0);
     }
     timer->stop();
@@ -253,6 +260,15 @@ void Widget::appendMessage(QString p_message)
     dt = dt.toLocalTime();
     QString str = dt.toString("hh:mm:ss.zzz");
     ui->textBrowser->append("[" + QString(qPrintable(str)) + "] " + p_message);
+}
+
+void Widget::appendSolverMessage(QString p_message)
+{
+    // 現在の日時を取得
+    QDateTime dt = QDateTime::currentDateTime();
+    dt = dt.toLocalTime();
+    QString str = dt.toString("hh:mm:ss.zzz");
+    ui->textBrowserSolver->append("[" + QString(qPrintable(str)) + "] " + p_message);
 }
 
 void Widget::sendData(QString p_message)

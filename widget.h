@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QTcpServer>
 #include <QTimer>
-#define INTERVAL 50
+#define INTERVAL 100
 #include "solverthread.h"
 
 namespace Ui {
@@ -26,6 +26,7 @@ private slots:
     void updateProgress();
     void onCompleted(bool isSuccess = false, QString solution = "");
     void appendMessage(QString p_message);
+    void appendSolverMessage(QString p_message);
 
     void on_pushButtonStart_clicked();
 

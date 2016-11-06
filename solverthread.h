@@ -27,6 +27,7 @@ signals:
     void notifyCubeState(QString p_message);
     void notifySolution(QString p_message);
     void notifyProgress(int p_progress);
+    void notifySolverMessage(QString p_message);
 
 private:
     qint64 m_timeOut;
