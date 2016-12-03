@@ -561,7 +561,7 @@ int CIDAstarSearch::TranslateMove(const int p_move, int p_power,  const bool p_p
 
 	// 90[deg]回転を2回やるなら180[deg]回転に変換する
 	if (p_power == 2) {
-		translatedMove = CCube::GetQuarterTurnToHalfTurnMove(p_move);
+        translatedMove = CCube::GetQuarterTurnToHalfTurnMove(p_move);
 	}
 	// 90[deg]回転を3回やるなら-90[deg]回転に変換する
 	else if (p_power == 3) {
