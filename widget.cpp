@@ -20,6 +20,7 @@ Widget::Widget(QWidget *parent) :
     busy = false;
     //timer = nullptr;
     timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
 
     // GUIの初期設定
     ui->pushButtonStart->setEnabled(true);
@@ -74,14 +75,15 @@ void Widget::disConnection()
     tcpSocket = NULL;
 
     appendMessage("The client has been disconnected.");
+    ui->checkBoxBeacon->setChecked(false);
+    ui->lineEditBeaconNum->clear();
+    ui->lineEditBeaconStr->clear();
 }
 
 void Widget::receiveData()
 {
     char buffer[4096] = {'\0'};
     qint64 len = 0;
-
-    appendMessage("Invalid faefa.");
 
     while((len = tcpSocket->bytesAvailable()) != 0){
         // データの取得
@@ -91,7 +93,7 @@ void Widget::receiveData()
 
     // "BEACON"を探索する
     if(!std::strncmp(buffer, "BEACON", 6)){
-        appendMessage("The server has received a BEACON.");
+        appendMessage("The server has received a BEACON message.");
         QStringList strList = QString(buffer).trimmed().split(" "); // trimしてSpaceで分割
 
         if(strList.size() != 2){
@@ -103,12 +105,35 @@ void Widget::receiveData()
         if(QString(strList.at(1)).trimmed() == "START"){
             // BEACON START
             appendMessage("Start BEACON.");
+            ui->checkBoxBeacon->setChecked(true);
+
+            // Solutionを保存
+            beaconSolution = ui->lineEditSolution->text().trimmed();
+            beaconStrList = beaconSolution.split(" ");
+
+            if(QString(beaconStrList.at(0)).toInt()){
+                // 初めがtimeOutの値だったら削除する
+                beaconStrList.removeAt(0);
+            }
+
+            // timeOutと'.'を削除したStringを再作成する
+            beaconSolution = "";
+            for(int i = 0; i < beaconStrList.size(); i++){
+                if(QString(beaconStrList.at(i)) == ".") continue;
+                beaconSolution += QString(beaconStrList.at(i)) + " ";
+            }
+            beaconSolution.trimmed();
+            appendMessage(beaconSolution);
+            beaconStrList = beaconSolution.split(" ");
 
             return;
         }
         else if(QString(strList.at(1)).trimmed() == "STOP"){
             // BEACON STOP
             appendMessage("Stop BEACON.");
+            ui->checkBoxBeacon->setChecked(false);
+            ui->lineEditBeaconNum->clear();
+            ui->lineEditBeaconStr->clear();
 
             return;
         }
@@ -119,23 +144,33 @@ void Widget::receiveData()
                 if(!std::isdigit(QString(strList.at(1)).trimmed().toStdString().c_str()[i])){
                     num_flag = false;
                 }
-
             }
 
-            if(num_flag){
-                // BEACON num
+            if(num_flag && ui->checkBoxBeacon->isChecked()){
+                // BEACON num を使って更新
                 int beacon_num = QString(strList.at(1)).toInt();
                 appendMessage("BEACON " + QString(strList.at(1)));
 
-                return;
+                // 該当番号の回転記号を取得して操作を加える
+                // 番号を表示
+                ui->lineEditBeaconNum->setText(QString(strList.at(1)));
+                if(beacon_num < beaconStrList.size()){
+                    // 回転記号を表示
+                    ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
+                }
+                else {
+                    ui->lineEditBeaconStr->setText("ERR");
+                }
+            }
+            else if(!ui->checkBoxBeacon->isChecked()){
+                appendMessage("Beacon Mode is not started.");
             }
             else{
                 // BEACON形式がおかしい
                 appendMessage("Invalid BEACON.");
-
-                return;
             }
 
+            return;
         }
     }
     else{
@@ -153,6 +188,7 @@ void Widget::receiveData()
     }
     appendMessage("Start to parse a cube state data.");
     ui->progressBar->setValue(0);
+    ui->checkBoxBeacon->setChecked(false);
     // とりあえず現在のtimeOutを取得
     int timeOut = ui->lineEditTimeOut->text().toInt();
 
@@ -266,7 +302,7 @@ bool Widget::solve(int p_timeOut, QString p_message)
 
         // timerスタート
         //timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+        //connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
         m_timerCount = 0;
         ui->progressBar->setValue(0);
         timer->start(INTERVAL);
@@ -311,7 +347,10 @@ void Widget::onCompleted(bool isSuccess, QString solution)
         }
         ui->progressBar->setValue(0);
     }
-    if(timer != nullptr && timer->isActive()) timer->stop();
+
+    timer->stop();
+    //disconnect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+    m_timerCount = 0;
     ui->lineEditTimeOut->setEnabled(true);
 }
 

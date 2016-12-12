@@ -55,6 +55,10 @@ private:
     QTcpServer *tcpServer;
     QTcpSocket *tcpSocket;
 
+    // BEACONトレース用バッファ
+    QString beaconSolution;
+    QStringList beaconStrList;
+
     bool solve(int p_timeOut, QString p_message);
     void sendData(QString p_message);
     void setColor(char p_color, int p_pos);
