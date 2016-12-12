@@ -97,7 +97,7 @@ public:
 	}
 
 	// +-90[deg]回転を180[deg]回転に変換する (ex. R と Ri は R2 になる)
-    inline static int const GetQuarterTurnToHalfTurnMove(const int p_move)
+    inline static int const ConvertQuarterTurnToHalfTurnMove(const int p_move)
 	{
 		return (U2 + p_move % (B + 1));
 	}

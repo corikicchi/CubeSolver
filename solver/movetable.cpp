@@ -88,7 +88,7 @@ void CMoveTable::PrintMoveTable() const
 		for (int move = CCube::Move::U; move <= CCube::Move::B; move++) {
 			int move2 = move;
 			if (m_isPhase2 && move != CCube::Move::U && move != CCube::Move::D) {
-                move2 = CCube::GetQuarterTurnToHalfTurnMove(move);
+                move2 = CCube::ConvertQuarterTurnToHalfTurnMove(move);
 			}
 			std::cout << CCube::GetNameOfMove(move2) << ":" << std::setw(8) << m_table[ordinal][move] << " ";
 		}
@@ -113,7 +113,7 @@ void CMoveTable::GenerateMoveTable()
 			// Phase 2 では <U,D,R2,L2,F2,B2> の移動のみ
 			int move2 = move;
 			if (m_isPhase2 && move != CCube::Move::U && move != CCube::Move::D) {
-                move2 = CCube::GetQuarterTurnToHalfTurnMove(move);	// R,L,F,Bを180[deg]回転に変換する
+                move2 = CCube::ConvertQuarterTurnToHalfTurnMove(move);	// R,L,F,Bを180[deg]回転に変換する
 			}
 
 			// cubeを動かす(後で戻す)
