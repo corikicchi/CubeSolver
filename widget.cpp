@@ -1,6 +1,9 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include <cstring>
+#include <cctype>
+#include <algorithm>
 #include <QTcpSocket>
 #include <QDateTime>
 
@@ -15,6 +18,8 @@ Widget::Widget(QWidget *parent) :
     // ServerとSolverをStop
     ServerIsValid = false;
     busy = false;
+    //timer = nullptr;
+    timer = new QTimer(this);
 
     // GUIの初期設定
     ui->pushButtonStart->setEnabled(true);
@@ -76,12 +81,66 @@ void Widget::receiveData()
     char buffer[4096] = {'\0'};
     qint64 len = 0;
 
+    appendMessage("Invalid faefa.");
+
     while((len = tcpSocket->bytesAvailable()) != 0){
         // データの取得
         tcpSocket->read(buffer, tcpSocket->bytesAvailable());
         buffer[len] = '\0';
+    }
 
+    // "BEACON"を探索する
+    if(!std::strncmp(buffer, "BEACON", 6)){
+        appendMessage("The server has received a BEACON.");
+        QStringList strList = QString(buffer).trimmed().split(" "); // trimしてSpaceで分割
+
+        if(strList.size() != 2){
+            // BEACON形式がおかしい
+            appendMessage("Invalid BEACON.");
+            return;
+        }
+
+        if(QString(strList.at(1)).trimmed() == "START"){
+            // BEACON START
+            appendMessage("Start BEACON.");
+
+            return;
+        }
+        else if(QString(strList.at(1)).trimmed() == "STOP"){
+            // BEACON STOP
+            appendMessage("Stop BEACON.");
+
+            return;
+        }
+        else{
+            bool num_flag = true;
+
+            for(int i = 0; i < QString(strList.at(1)).trimmed().size(); i++){
+                if(!std::isdigit(QString(strList.at(1)).trimmed().toStdString().c_str()[i])){
+                    num_flag = false;
+                }
+
+            }
+
+            if(num_flag){
+                // BEACON num
+                int beacon_num = QString(strList.at(1)).toInt();
+                appendMessage("BEACON " + QString(strList.at(1)));
+
+                return;
+            }
+            else{
+                // BEACON形式がおかしい
+                appendMessage("Invalid BEACON.");
+
+                return;
+            }
+
+        }
+    }
+    else{
         appendMessage("The server has received a cube state.");
+        // 処理を続ける
     }
 
     // 受信できたのでデータをparse
@@ -206,7 +265,7 @@ bool Widget::solve(int p_timeOut, QString p_message)
         worker.start();
 
         // timerスタート
-        timer = new QTimer(this);
+        //timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
         m_timerCount = 0;
         ui->progressBar->setValue(0);
@@ -252,7 +311,7 @@ void Widget::onCompleted(bool isSuccess, QString solution)
         }
         ui->progressBar->setValue(0);
     }
-    timer->stop();
+    if(timer != nullptr && timer->isActive()) timer->stop();
     ui->lineEditTimeOut->setEnabled(true);
 }
 
