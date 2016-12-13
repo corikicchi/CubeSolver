@@ -58,6 +58,11 @@ private:
     // BEACONトレース用バッファ
     QString beaconSolution;
     QStringList beaconStrList;
+    char m_colorsArray[9 * 6];
+    void applyBeaconMove(const QString p_moveStr);
+    void turnFrontalFace(const int p_centerNum, const int p_applyTimes);
+    void rotateSideFace(const char p_face, const int p_applyTimes);
+
 
     bool solve(int p_timeOut, QString p_message);
     void sendData(QString p_message);

@@ -123,7 +123,7 @@ void Widget::receiveData()
                 beaconSolution += QString(beaconStrList.at(i)) + " ";
             }
             beaconSolution.trimmed();
-            appendMessage(beaconSolution);
+            //appendMessage(beaconSolution);
             beaconStrList = beaconSolution.split(" ");
 
             return;
@@ -140,6 +140,7 @@ void Widget::receiveData()
         else{
             bool num_flag = true;
 
+            // ERROR CHECK
             for(int i = 0; i < QString(strList.at(1)).trimmed().size(); i++){
                 if(!std::isdigit(QString(strList.at(1)).trimmed().toStdString().c_str()[i])){
                     num_flag = false;
@@ -157,6 +158,8 @@ void Widget::receiveData()
                 if(beacon_num < beaconStrList.size()){
                     // 回転記号を表示
                     ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
+                    // 操作を加える
+                    applyBeaconMove(QString(beaconStrList.at(beacon_num)));
                 }
                 else {
                     ui->lineEditBeaconStr->setText("ERR");
@@ -231,6 +234,7 @@ void Widget::receiveData()
     // Cube Stateを表示
     strCubeState = strCubeState.trimmed();  // 両端をトリム
     ui->lineEditCubeState->setText(strCubeState);
+    on_lineEditCubeState_textChanged(strCubeState);
 
     appendMessage("Finish parsing a cube state data.");
 
@@ -437,6 +441,8 @@ void Widget::on_pushButtonStop_clicked()
 
 void Widget::on_lineEditCubeState_textChanged(const QString &arg1)
 {
+    if(busy || worker.isRunning()) return;
+
     // show cube colors
     QStringList strList = arg1.split(" ");
     if(strList.size() <= 6){
@@ -457,6 +463,7 @@ void Widget::on_lineEditCubeState_textChanged(const QString &arg1)
                 else{
                     ch = 'I';
                 }
+                m_colorsArray[face * 9 + j] = ch;
                 setColor(ch, face * 9 + j);
             }
         }
@@ -561,4 +568,101 @@ void Widget::on_pushButtonSolve_clicked()
     }
     */
     solve(ui->lineEditTimeOut->text().toInt(), QString(ui->lineEditCubeState->text()).trimmed());
+}
+
+void Widget::applyBeaconMove(const QString p_moveStr)
+{
+    const char firstChar = p_moveStr.toStdString()[0];
+    char secondChar;
+    if(p_moveStr.length() == 2){
+        secondChar = p_moveStr.toStdString()[1];
+    }
+    else{
+        secondChar = '\0';
+    }
+
+    int centerNum = -1;
+    switch(firstChar){
+    case 'U': centerNum = 4; break;
+    case 'D': centerNum = 13; break;
+    case 'L': centerNum = 22; break;
+    case 'R': centerNum = 31; break;
+    case 'F': centerNum = 40; break;
+    case 'B': centerNum = 49; break;
+    default: return;
+    }
+
+    int applyTimes = 0;
+    switch(secondChar){
+    case '\0': applyTimes = 1; break;   // 90deg回転
+    case '\'': applyTimes = 3; break;   // 270deg回転
+    case '2': applyTimes = 2; break;    // 180deg回転
+    default: return;
+    }
+
+    // 正面の状態遷移
+    turnFrontalFace(centerNum, applyTimes);
+    // 側面の状態遷移
+    rotateSideFace(firstChar, applyTimes);
+
+    // 色のセット
+    for(int i = 0; i < 9 * 6; i++){
+        setColor(m_colorsArray[i], i);
+    }
+}
+
+void Widget::turnFrontalFace(const int p_centerNum, const int p_applyTimes)
+{
+    for(int i = 0; i < p_applyTimes; i++){
+        // 正面の状態遷移
+        char temp[9];
+        for(int j = 0; j < 9; j++){
+            temp[j] = m_colorsArray[p_centerNum - 4 + j];
+        }
+        m_colorsArray[p_centerNum - 4 + 0] = temp[6];
+        m_colorsArray[p_centerNum - 4 + 1] = temp[3];
+        m_colorsArray[p_centerNum - 4 + 2] = temp[0];
+        m_colorsArray[p_centerNum - 4 + 5] = temp[1];
+        m_colorsArray[p_centerNum - 4 + 8] = temp[2];
+        m_colorsArray[p_centerNum - 4 + 7] = temp[5];
+        m_colorsArray[p_centerNum - 4 + 6] = temp[8];
+        m_colorsArray[p_centerNum - 4 + 3] = temp[7];
+    }
+}
+
+void Widget::rotateSideFace(const char p_face, const int p_applyTimes)
+{
+    QVector<int> sideBlockNums; // rotationする配列番号(3シフトx回転回数)
+    switch(p_face){
+    case 'U':
+        sideBlockNums << 20 << 19 << 18 << 47 << 46 << 45 << 29 << 28 << 27 << 38 << 37 << 36;
+        break;
+    case 'D':
+        sideBlockNums << 24 << 25 << 26 << 42 << 43 << 44 << 33 << 34 << 35 << 51 << 52 << 53;
+        break;
+    case 'L':
+        sideBlockNums << 0 << 3 << 6 << 36 << 39 << 42 << 9 << 12 << 15 << 53 << 50 << 47;
+        break;
+    case 'R':
+        sideBlockNums << 8 << 5 << 2 << 45 << 48 << 51 << 17 << 14 << 11 << 44 << 41 << 38;
+        break;
+    case 'F':
+        sideBlockNums << 6 << 7 << 8 << 27 << 30 << 33 << 11 << 10 << 9 << 26 << 23 << 20;
+        break;
+    case 'B':
+        sideBlockNums << 2 << 1 << 0 << 18 << 21 << 24 << 15 << 16 << 17 << 35 << 32 << 29;
+        break;
+    default: return;
+    }
+
+    for(int i = 0; i < p_applyTimes; i++){
+        // rotationする
+        char temp[12];
+        for(int j = 0; j < 12; j++){
+            temp[j] = m_colorsArray[sideBlockNums.at(j)];
+        }
+        for(int j = 0; j < 12; j++){
+            m_colorsArray[sideBlockNums.at(j)] = temp[(j + 9) % 12];
+        }
+    }
 }
