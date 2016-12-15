@@ -96,6 +96,7 @@ void Widget::receiveData()
         appendMessage("The server has received a BEACON message.");
         QStringList strList = QString(buffer).trimmed().split(" "); // trimしてSpaceで分割
 
+        appendSolverMessage(QString(buffer).trimmed());
         if(strList.size() != 2){
             // BEACON形式がおかしい
             appendMessage("Invalid BEACON.");
