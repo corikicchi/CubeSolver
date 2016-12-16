@@ -36,6 +36,8 @@ private slots:
 
     void on_pushButtonSolve_clicked();
 
+    void on_checkBoxDetail_stateChanged(int arg1);
+
 private:
     // GUIクラス
     Ui::Widget *ui;

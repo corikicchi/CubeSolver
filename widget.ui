@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>590</height>
+    <height>480</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>700</width>
+    <height>480</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
@@ -764,6 +770,19 @@
    </property>
    <property name="readOnly">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxDetail">
+   <property name="geometry">
+    <rect>
+     <x>610</x>
+     <y>450</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show Detail</string>
    </property>
   </widget>
  </widget>

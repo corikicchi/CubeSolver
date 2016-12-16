@@ -105,7 +105,7 @@ void Widget::receiveData()
 
         if(QString(strList.at(1)).trimmed() == "START"){
             // BEACON START
-            appendMessage("Start BEACON.");
+            appendMessage("Start BEACON mode.");
             ui->checkBoxBeacon->setChecked(true);
 
             // Solutionを保存
@@ -131,7 +131,7 @@ void Widget::receiveData()
         }
         else if(QString(strList.at(1)).trimmed() == "STOP"){
             // BEACON STOP
-            appendMessage("Stop BEACON.");
+            appendMessage("Stop BEACON mode.");
             ui->checkBoxBeacon->setChecked(false);
             ui->lineEditBeaconNum->clear();
             ui->lineEditBeaconStr->clear();
@@ -151,7 +151,7 @@ void Widget::receiveData()
             if(num_flag && ui->checkBoxBeacon->isChecked()){
                 // BEACON num を使って更新
                 int beacon_num = QString(strList.at(1)).toInt();
-                appendMessage("BEACON " + QString(strList.at(1)));
+                //appendMessage("BEACON " + QString(strList.at(1)));
 
                 // 該当番号の回転記号を取得して操作を加える
                 // 番号を表示
@@ -665,5 +665,14 @@ void Widget::rotateSideFace(const char p_face, const int p_applyTimes)
         for(int j = 0; j < 12; j++){
             m_colorsArray[sideBlockNums.at(j)] = temp[(j + 9) % 12];
         }
+    }
+}
+void Widget::on_checkBoxDetail_stateChanged(int arg1)
+{
+    if(ui->checkBoxDetail->isChecked()){
+        resize(700, 590);
+    }
+    else{
+        resize(700, 480);
     }
 }
