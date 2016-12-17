@@ -14,6 +14,7 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     // 初期設定
+    m_moveTimes = 1;
 
     // ServerとSolverをStop
     ServerIsValid = false;
@@ -157,6 +158,8 @@ void Widget::receiveData()
                 // 番号を表示
                 ui->lineEditBeaconNum->setText(QString(strList.at(1)));
                 if(beacon_num < beaconStrList.size()){
+                    // 進捗を表示
+                    ui->progressBar->setValue((beacon_num + 1) * 100.0 / m_moveTimes);
                     // 回転記号を表示
                     ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
                     // 操作を加える
@@ -337,6 +340,8 @@ void Widget::onCompleted(bool isSuccess, QString solution)
 {
     busy = false;
     if(isSuccess){
+        QStringList tempList = solution.split(' ');
+        m_moveTimes = QString(tempList.at(0)).toInt();
         if(ServerIsValid){
             sendData(solution.trimmed());
         }
@@ -442,7 +447,7 @@ void Widget::on_pushButtonStop_clicked()
 
 void Widget::on_lineEditCubeState_textChanged(const QString &arg1)
 {
-    if(busy || worker.isRunning()) return;
+    if(busy || worker.isRunning() || ui->checkBoxBeacon->isChecked())return;
 
     // show cube colors
     QStringList strList = arg1.split(" ");

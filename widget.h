@@ -61,6 +61,7 @@ private:
     QString beaconSolution;
     QStringList beaconStrList;
     char m_colorsArray[9 * 6];
+    int m_moveTimes;
     void applyBeaconMove(const QString p_moveStr);
     void turnFrontalFace(const int p_centerNum, const int p_applyTimes);
     void rotateSideFace(const char p_face, const int p_applyTimes);
