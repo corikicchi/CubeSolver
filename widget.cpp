@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include "opengl/glwidget.h"
 
 #include <cstring>
 #include <cctype>
@@ -47,6 +48,8 @@ Widget::Widget(QWidget *parent) :
 
     // GUI connection
     connect(ui->pushButtonSolverClear, SIGNAL(clicked(bool)), ui->textBrowserSolver, SLOT(clear()));
+    connect(ui->SliderX, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeX_Changed(int)));
+    connect(ui->SliderY, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeY_Changed(int)));
 }
 
 Widget::~Widget()
@@ -473,6 +476,8 @@ void Widget::on_lineEditCubeState_textChanged(const QString &arg1)
                 setColor(ch, face * 9 + j);
             }
         }
+        std::vector<char> colorsVec(m_colorsArray,m_colorsArray + 54);
+        ui->GLwidget->setColorVec(colorsVec);
     }
 }
 
@@ -615,6 +620,8 @@ void Widget::applyBeaconMove(const QString p_moveStr)
     for(int i = 0; i < 9 * 6; i++){
         setColor(m_colorsArray[i], i);
     }
+    std::vector<char> colorsVec(m_colorsArray,m_colorsArray + 54);
+    ui->GLwidget->setColorVec(colorsVec);
 }
 
 void Widget::turnFrontalFace(const int p_centerNum, const int p_applyTimes)

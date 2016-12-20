@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     solver/movetable.cpp \
     solver/ordinalcube.cpp \
     solver/printvector.cpp \
-    solver/pruningtable.cpp
+    solver/pruningtable.cpp \
+    opengl/glwidget.cpp
 
 HEADERS  += widget.h \
     solverthread.h \
@@ -37,6 +38,9 @@ HEADERS  += widget.h \
     solver/timer.h \
     solver/calculateordinal.h \
     solver/idastarsearch.h \
-    solver/ordinalcube.h
+    solver/ordinalcube.h \
+    opengl/glwidget.h
 
 FORMS    += widget.ui
+
+LIBS += opengl32.lib glu32.lib
