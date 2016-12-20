@@ -101,87 +101,84 @@ void Widget::receiveData()
         QStringList strList = QString(buffer).trimmed().split(" "); // trimしてSpaceで分割
 
         appendSolverMessage(QString(buffer).trimmed());
-        if(strList.size() != 2){
+        if(strList.size() % 2 != 0){
             // BEACON形式がおかしい
             appendMessage("Invalid BEACON.");
             return;
         }
 
-        if(QString(strList.at(1)).trimmed() == "START"){
-            // BEACON START
-            appendMessage("Start BEACON mode.");
-            ui->checkBoxBeacon->setChecked(true);
+        for(int b_num = 0; b_num < strList.size() / 2; b_num++){
+            if(QString(strList.at(1)).trimmed() == "START"){
+                // BEACON START
+                appendMessage("Start BEACON mode.");
+                ui->checkBoxBeacon->setChecked(true);
 
-            // Solutionを保存
-            beaconSolution = ui->lineEditSolution->text().trimmed();
-            beaconStrList = beaconSolution.split(" ");
+                // Solutionを保存
+                beaconSolution = ui->lineEditSolution->text().trimmed();
+                beaconStrList = beaconSolution.split(" ");
 
-            if(QString(beaconStrList.at(0)).toInt()){
-                // 初めがtimeOutの値だったら削除する
-                beaconStrList.removeAt(0);
-            }
-
-            // timeOutと'.'を削除したStringを再作成する
-            beaconSolution = "";
-            for(int i = 0; i < beaconStrList.size(); i++){
-                if(QString(beaconStrList.at(i)) == ".") continue;
-                beaconSolution += QString(beaconStrList.at(i)) + " ";
-            }
-            beaconSolution.trimmed();
-            //appendMessage(beaconSolution);
-            beaconStrList = beaconSolution.split(" ");
-
-            return;
-        }
-        else if(QString(strList.at(1)).trimmed() == "STOP"){
-            // BEACON STOP
-            appendMessage("Stop BEACON mode.");
-            ui->checkBoxBeacon->setChecked(false);
-            ui->lineEditBeaconNum->clear();
-            ui->lineEditBeaconStr->clear();
-
-            return;
-        }
-        else{
-            bool num_flag = true;
-
-            // ERROR CHECK
-            for(int i = 0; i < QString(strList.at(1)).trimmed().size(); i++){
-                if(!std::isdigit(QString(strList.at(1)).trimmed().toStdString().c_str()[i])){
-                    num_flag = false;
+                if(QString(beaconStrList.at(0)).toInt()){
+                    // 初めがtimeOutの値だったら削除する
+                    beaconStrList.removeAt(0);
                 }
-            }
 
-            if(num_flag && ui->checkBoxBeacon->isChecked()){
-                // BEACON num を使って更新
-                int beacon_num = QString(strList.at(1)).toInt();
-                //appendMessage("BEACON " + QString(strList.at(1)));
-
-                // 該当番号の回転記号を取得して操作を加える
-                // 番号を表示
-                ui->lineEditBeaconNum->setText(QString(strList.at(1)));
-                if(beacon_num < beaconStrList.size()){
-                    // 進捗を表示
-                    ui->progressBar->setValue((beacon_num + 1) * 100.0 / m_moveTimes);
-                    // 回転記号を表示
-                    ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
-                    // 操作を加える
-                    applyBeaconMove(QString(beaconStrList.at(beacon_num)));
+                // timeOutと'.'を削除したStringを再作成する
+                beaconSolution = "";
+                for(int i = 0; i < beaconStrList.size(); i++){
+                    if(QString(beaconStrList.at(i)) == ".") continue;
+                    beaconSolution += QString(beaconStrList.at(i)) + " ";
                 }
-                else {
-                    ui->lineEditBeaconStr->setText("ERR");
-                }
+                beaconSolution.trimmed();
+                //appendMessage(beaconSolution);
+                beaconStrList = beaconSolution.split(" ");
             }
-            else if(!ui->checkBoxBeacon->isChecked()){
-                appendMessage("Beacon Mode is not started.");
+            else if(QString(strList.at(b_num * 2 + 1)).trimmed() == "STOP"){
+                // BEACON STOP
+                appendMessage("Stop BEACON mode.");
+                ui->checkBoxBeacon->setChecked(false);
+                ui->lineEditBeaconNum->clear();
+                ui->lineEditBeaconStr->clear();
             }
             else{
-                // BEACON形式がおかしい
-                appendMessage("Invalid BEACON.");
-            }
+                bool num_flag = true;
 
-            return;
+                // ERROR CHECK
+                for(int i = 0; i < QString(strList.at(b_num * 2 + 1)).trimmed().size(); i++){
+                    if(!std::isdigit(QString(strList.at(b_num * 2 + 1)).trimmed().toStdString().c_str()[i])){
+                        num_flag = false;
+                    }
+                }
+
+                if(num_flag && ui->checkBoxBeacon->isChecked()){
+                    // BEACON num を使って更新
+                    int beacon_num = QString(strList.at(b_num * 2 + 1)).toInt();
+                    //appendMessage("BEACON " + QString(strList.at(1)));
+
+                    // 該当番号の回転記号を取得して操作を加える
+                    // 番号を表示
+                    ui->lineEditBeaconNum->setText(QString(strList.at(b_num * 2 + 1)));
+                    if(beacon_num < beaconStrList.size()){
+                        // 進捗を表示
+                        ui->progressBar->setValue((beacon_num + 1) * 100.0 / m_moveTimes);
+                        // 回転記号を表示
+                        ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
+                        // 操作を加える
+                        applyBeaconMove(QString(beaconStrList.at(beacon_num)));
+                    }
+                    else {
+                        ui->lineEditBeaconStr->setText("ERR");
+                    }
+                }
+                else if(!ui->checkBoxBeacon->isChecked()){
+                    appendMessage("Beacon Mode is not started.");
+                }
+                else{
+                    // BEACON形式がおかしい
+                    appendMessage("Invalid BEACON.");
+                }
+            }
         }
+        return;
     }
     else{
         appendMessage("The server has received a cube state.");
