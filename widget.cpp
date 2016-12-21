@@ -62,11 +62,11 @@ Widget::~Widget()
 
 void Widget::onEyeXdiffChanged(int p_x)
 {
-    ui->SliderX->setValue(ui->SliderX->value() - p_x / 2);
+    ui->SliderX->setValue(ui->SliderX->value() - ((p_x > 0) ? (p_x + 1) : (p_x - 1)) / 2);
 }
 void Widget::onEyeYdiffChanged(int p_y)
 {
-    ui->SliderY->setValue(ui->SliderY->value() - p_y / 2);
+    ui->SliderY->setValue(ui->SliderY->value() - ((p_y > 0) ? (p_y + 1) : (p_y - 1)) / 2);
 }
 
 void Widget::acceptConnection()
