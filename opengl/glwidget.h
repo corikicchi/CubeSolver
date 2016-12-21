@@ -4,6 +4,8 @@
 #include <QGLWidget>
 #include <vector>
 
+#define DEG2RAD (3.14159265358979 / 180.0)
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -11,19 +13,43 @@ public:
     explicit GLWidget(QWidget *parent = 0);
 
 signals:
+    // 変位ピクセル量の通知
+    void NotifyEyeXdiff(int p_x);
+    void NotifyEyeYdiff(int p_y);
 
 public slots:
-    void eyeX_Changed(int p_x);
-    void eyeY_Changed(int p_y);
-    // カラー通知
-    void setColorVec(std::vector<char> &p_colors);
+    // スライダ量が変化したら更新
+    inline void eyeXChanged(int p_x)
+    // p_x = [0, 360]
+    {
+        m_eyeX = (double)p_x;
+        update();
+    }
+    inline void eyeYChanged(int p_y)
+    // p_y = [10, 170]
+    {
+        m_eyeY = (double)p_y;
+        update();
+    }
+    // 状態が変化したら更新
+    inline void setColorVec(std::vector<char> &p_colors)
+    {
+        m_colors = p_colors;
+        update();
+    }
 
 private:
     int m_r;
-    double m_eyeX;
-    double m_eyeY;
-    // カラーbuffer
+    int m_eyeX;
+    int m_eyeY;
+
+    // color buffer
     std::vector<char> m_colors;
+
+    // mouse drag
+    QPoint m_lastPos;
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 protected:
     void initializeGL();

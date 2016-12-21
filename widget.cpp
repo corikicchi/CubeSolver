@@ -48,13 +48,25 @@ Widget::Widget(QWidget *parent) :
 
     // GUI connection
     connect(ui->pushButtonSolverClear, SIGNAL(clicked(bool)), ui->textBrowserSolver, SLOT(clear()));
-    connect(ui->SliderX, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeX_Changed(int)));
-    connect(ui->SliderY, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeY_Changed(int)));
+    connect(ui->SliderX, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeXChanged(int)));
+    connect(ui->SliderY, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeYChanged(int)));
+    connect(ui->GLwidget, SIGNAL(NotifyEyeXdiff(int)), this, SLOT(onEyeXdiffChanged(int)));
+    connect(ui->GLwidget, SIGNAL(NotifyEyeYdiff(int)), this, SLOT(onEyeYdiffChanged(int)));
+
 }
 
 Widget::~Widget()
 {
     delete ui;
+}
+
+void Widget::onEyeXdiffChanged(int p_x)
+{
+    ui->SliderX->setValue(ui->SliderX->value() - p_x / 2);
+}
+void Widget::onEyeYdiffChanged(int p_y)
+{
+    ui->SliderY->setValue(ui->SliderY->value() - p_y / 2);
 }
 
 void Widget::acceptConnection()
@@ -676,6 +688,7 @@ void Widget::rotateSideFace(const char p_face, const int p_applyTimes)
         }
     }
 }
+
 void Widget::on_checkBoxDetail_stateChanged(int arg1)
 {
     if(ui->checkBoxDetail->isChecked()){
@@ -685,3 +698,5 @@ void Widget::on_checkBoxDetail_stateChanged(int arg1)
         resize(700, 480);
     }
 }
+
+

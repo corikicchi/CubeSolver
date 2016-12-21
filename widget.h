@@ -26,7 +26,9 @@ private slots:
     void updateProgress();
     void onCompleted(bool isSuccess = false, QString solution = "");
     void appendMessage(QString p_message);
-    void appendSolverMessage(QString p_message);
+    void appendSolverMessage(QString p_message);   
+    void onEyeXdiffChanged(int p_x);
+    void onEyeYdiffChanged(int p_y);
 
     void on_pushButtonStart_clicked();
 

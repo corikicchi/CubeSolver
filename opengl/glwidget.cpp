@@ -1,5 +1,6 @@
 #include "glwidget.h"
 #include <GL/glu.h>
+#include <QtWidgets>
 
 GLWidget::GLWidget(QWidget *parent):
     QGLWidget(parent)
@@ -13,13 +14,14 @@ GLWidget::GLWidget(QWidget *parent):
 void GLWidget::initializeGL()
 {
     // 背景色指定
-    qglClearColor(Qt::lightGray);
+    //qglClearColor(Qt::lightGray);
+    qglClearColor(Qt::white);
     // for 印面消去
     glEnable(GL_DEPTH_TEST);
 
     // 初期値
-    m_eyeX = 45 * 3.14159265358979 / 180.0;
-    m_eyeY = 45 * 3.14159265358979 / 180.0;
+    m_eyeX = 30;
+    m_eyeY = 60;
 }
 
 void GLWidget::resizeGL(int p_width, int p_height)
@@ -40,9 +42,9 @@ void GLWidget::paintGL()
     gluPerspective(30.0,(double)width()/(double)height(), 1.0, 100.0);
     // 極座標
     const double p_r = 10;
-    double p_x = p_r * std::sin(m_eyeY) * std::cos(m_eyeX);
-    double p_y = p_r * std::sin(m_eyeY) * std::sin(m_eyeX);
-    double p_z = p_r * std::cos(m_eyeY);
+    double p_x = p_r * std::sin(m_eyeY * DEG2RAD) * std::cos(m_eyeX * DEG2RAD);
+    double p_y = p_r * std::sin(m_eyeY * DEG2RAD) * std::sin(m_eyeX * DEG2RAD);
+    double p_z = p_r * std::cos(m_eyeY * DEG2RAD);
     gluLookAt(p_x, p_y, p_z,    //  視点位置
               0.0, 0.0, 0.0,    //  目標位置
               0.0, 0.0, 1.0);   //  上方向
@@ -133,7 +135,7 @@ void GLWidget::paintGL()
 
     // face描画
     for (int i = 0; i < 9 * 6; i++) {
-        if(i == m_colors.size()) continue;
+        if(i == m_colors.size()) break;
 
         switch(m_colors.at(i)){
         case 'O':
@@ -202,22 +204,21 @@ void GLWidget::paintGL()
     glFlush();
 }
 
-void GLWidget::eyeX_Changed(int p_x)
-// p_x = [0, 360]
+void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-    m_eyeX = (double)p_x * 3.14159265358979 / 180.0;
-    update();
+    m_lastPos = event->pos();
 }
 
-void GLWidget::eyeY_Changed(int p_y)
-// p_y = [10, 170]
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    m_eyeY = (double)p_y * 3.14159265358979 / 180.0;
-    update();
-}
+    int dx = event->x() - m_lastPos.x();
+    int dy = event->y() - m_lastPos.y();
 
-void GLWidget::setColorVec(std::vector<char> &p_colors)
-{
-    m_colors = p_colors;
-    update();
+    if (event->buttons() & Qt::LeftButton) {
+        // 変位ピクセル数を通知する
+        emit NotifyEyeXdiff(dx);
+        emit NotifyEyeYdiff(dy);
+    }
+
+    m_lastPos = event->pos();
 }
