@@ -94,7 +94,7 @@ void Widget::autoScroll()
         switch(m_mode){
         case 0:
             ui->SliderX->setValue(scrollX + defDeffX);
-            if(120 <= scrollX) m_mode = 1;
+            if(125 <= scrollX) m_mode = 1;
             break;
 
         case 1:
@@ -103,7 +103,7 @@ void Widget::autoScroll()
             break;
         case 2:
             ui->SliderX->setValue(scrollX - defDeffX);
-            if(scrollX <= -120) m_mode = 3;
+            if(scrollX <= -125) m_mode = 3;
             break;
 
         case 3:
