@@ -220,7 +220,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>210</y>
+     <y>200</y>
      <width>131</width>
      <height>21</height>
     </rect>
@@ -870,6 +870,22 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxAutoScroll">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>220</y>
+     <width>75</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Auto Scroll</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

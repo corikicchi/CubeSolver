@@ -29,6 +29,7 @@ private slots:
     void appendSolverMessage(QString p_message);   
     void onEyeXdiffChanged(int p_x);
     void onEyeYdiffChanged(int p_y);
+    void autoScroll();
 
     void on_pushButtonStart_clicked();
 
@@ -68,6 +69,9 @@ private:
     void turnFrontalFace(const int p_centerNum, const int p_applyTimes);
     void rotateSideFace(const char p_face, const int p_applyTimes);
 
+    // AutoScroll用タイマーとモード
+    QTimer *timerScroll;
+    unsigned char m_mode;
 
     bool solve(int p_timeOut, QString p_message);
     void sendData(QString p_message);

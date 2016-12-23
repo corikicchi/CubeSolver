@@ -207,6 +207,7 @@ void GLWidget::paintGL()
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     m_lastPos = event->pos();
+    emit NotifyClicked();
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)

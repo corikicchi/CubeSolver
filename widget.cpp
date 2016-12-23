@@ -21,8 +21,16 @@ Widget::Widget(QWidget *parent) :
     ServerIsValid = false;
     busy = false;
     //timer = nullptr;
+    // タイマーの設定
+    // Progress表示用
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+    // AutoScroll用
+    timerScroll = new QTimer(this);
+    connect(timerScroll, SIGNAL(timeout()), this, SLOT(autoScroll()));
+    timerScroll->setInterval(100);
+    timerScroll->start();
+    m_mode = 0;
 
     // GUIの初期設定
     ui->pushButtonStart->setEnabled(true);
@@ -52,11 +60,16 @@ Widget::Widget(QWidget *parent) :
     connect(ui->SliderY, SIGNAL(valueChanged(int)), ui->GLwidget, SLOT(eyeYChanged(int)));
     connect(ui->GLwidget, SIGNAL(NotifyEyeXdiff(int)), this, SLOT(onEyeXdiffChanged(int)));
     connect(ui->GLwidget, SIGNAL(NotifyEyeYdiff(int)), this, SLOT(onEyeYdiffChanged(int)));
-
+    connect(ui->GLwidget, SIGNAL(NotifyClicked(bool)), ui->checkBoxAutoScroll, SLOT(setChecked(bool)));
 }
 
 Widget::~Widget()
 {
+    timer->stop();
+    delete timer;
+    timerScroll->stop();
+    delete timerScroll;
+
     delete ui;
 }
 
@@ -67,6 +80,39 @@ void Widget::onEyeXdiffChanged(int p_x)
 void Widget::onEyeYdiffChanged(int p_y)
 {
     ui->SliderY->setValue(ui->SliderY->value() - ((p_y > 0) ? (p_y + 1) : (p_y - 1)) / 2);
+}
+
+void Widget::autoScroll()
+{
+    int scrollX = ui->SliderX->value();
+    int scrollY = ui->SliderY->value();
+
+    const int defDeffX = 3;
+    const int defDeffY = 3;
+
+    if(ui->checkBoxAutoScroll->isChecked()){
+        switch(m_mode){
+        case 0:
+            ui->SliderX->setValue(scrollX + defDeffX);
+            if(120 <= scrollX) m_mode = 1;
+            break;
+
+        case 1:
+            ui->SliderY->setValue(scrollY + defDeffY);
+            if(120 <= scrollY) m_mode = 2;
+            break;
+        case 2:
+            ui->SliderX->setValue(scrollX - defDeffX);
+            if(scrollX <= -120) m_mode = 3;
+            break;
+
+        case 3:
+            ui->SliderY->setValue(scrollY - defDeffY);
+            if(scrollY <= 60) m_mode = 0;
+            break;
+        }
+
+    }
 }
 
 void Widget::acceptConnection()

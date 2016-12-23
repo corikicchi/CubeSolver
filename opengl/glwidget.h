@@ -16,6 +16,7 @@ signals:
     // 変位ピクセル量の通知
     void NotifyEyeXdiff(int p_x);
     void NotifyEyeYdiff(int p_y);
+    void NotifyClicked(bool flag = false);
 
 public slots:
     // スライダ量が変化したら更新
