@@ -220,7 +220,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>200</y>
+     <y>210</y>
      <width>131</width>
      <height>21</height>
     </rect>
@@ -818,6 +818,7 @@
        <height>261</height>
       </rect>
      </property>
+     <zorder>checkBoxAutoScroll</zorder>
     </widget>
     <widget class="QSlider" name="SliderY">
      <property name="geometry">
@@ -847,9 +848,9 @@
     <widget class="QSlider" name="SliderX">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>30</x>
        <y>280</y>
-       <width>511</width>
+       <width>471</width>
        <height>22</height>
       </rect>
      </property>
@@ -869,23 +870,23 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+    <widget class="QCheckBox" name="checkBoxAutoScroll">
+     <property name="geometry">
+      <rect>
+       <x>513</x>
+       <y>282</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Auto</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
-  </widget>
-  <widget class="QCheckBox" name="checkBoxAutoScroll">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>220</y>
-     <width>75</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Auto Scroll</string>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
