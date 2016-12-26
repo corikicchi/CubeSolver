@@ -218,6 +218,7 @@ void Widget::receiveData()
                     if(beacon_num < beaconStrList.size()){
                         // 進捗を表示
                         ui->progressBar->setValue((beacon_num + 1) * 100.0 / m_moveTimes);
+                        ui->progressBar->update();
                         // 回転記号を表示
                         ui->lineEditBeaconStr->setText(beaconStrList.at(beacon_num));
                         // 操作を加える
@@ -392,12 +393,14 @@ void Widget::updateProgress()
     double progress = ((double)(m_timerCount) / ui->lineEditTimeOut->text().toDouble()) * 100;
     m_timerCount += (INTERVAL);
     ui->progressBar->setValue((int)progress + 10);
+    ui->progressBar->update();
 }
 
 void Widget::onCompleted(bool isSuccess, QString solution)
 {
     busy = false;
     if(isSuccess){
+        ui->lineEditSolution->update();
         QStringList tempList = solution.split(' ');
         m_moveTimes = QString(tempList.at(0)).toInt();
         if(ServerIsValid){
